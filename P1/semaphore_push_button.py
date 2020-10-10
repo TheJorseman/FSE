@@ -1,7 +1,7 @@
 from gpiozero import LED, Button
 from time import sleep
 from threading import Thread,Event
-
+from signal import pause
 blink_time = 0.5
 blink_iter = 3
 
@@ -38,8 +38,10 @@ def semaphore():
 	while True:
 		semaphore_green.on()
 		if event.wait(green_time):
+			print("Se atiende la interrupcion")
 			sleep(time_to_stop)
 			interrup()
+			continue
 		transition(semaphore_green,semaphore_yellow)
 		led_on(semaphore_yellow,yellow_time)
 		transition(semaphore_yellow,semaphore_red, blink_t=False)
@@ -57,8 +59,8 @@ def interrup():
 def button_handler():
 	while True:
 		push_button.wait_for_press()
-		print("Se presionó el botón")
 		event.set()
+		
 
 sem = Thread(target=semaphore)
 button = Thread(target=button_handler)
