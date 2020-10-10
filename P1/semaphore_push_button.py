@@ -1,4 +1,4 @@
-from gpiozero import LED
+from gpiozero import LED, Button
 from time import sleep
 #from signal import pause
 from threading import Event,Thread
@@ -17,13 +17,15 @@ semaphore_red = LED(13)
 semaphore_yellow = LED(19)
 semaphore_green = LED(26)
 
-current_LED_name = None
+push_button = Button(2)
+
+current_LED_name = "" 
 
 def transition(current_LED, next_LED, blink_t=True):
 	if blink_t:
 		for t in range(2 * blink_iter):
 			current_LED.toggle()
-			sleep(blink_time)
+			event.wait(blink_time)
 	current_LED.off()
 	next_LED.on()
 
@@ -31,13 +33,13 @@ def led_on(current_LED,LED_time):
 	current_LED.on()
 	sleep(LED_time)
 
-
 def semaphore():
+	global current_LED_name
 	semaphore_red.off()
 	semaphore_yellow.off()
 	semaphore_green.off()
 	while True:
-		event.wait()
+		import pdb;pdb.set_trace()
 		while not event.is_set():
 			current_LED_name = 'green'
 			led_on(semaphore_green,green_time)
@@ -49,20 +51,21 @@ def semaphore():
 			led_on(semaphore_red,red_time)
 			transition(semaphore_red,semaphore_green, blink_t=False)
 		#Handler
-		interrup(current_LED)
+		interrup(current_LED_name)
 
-def interrup(current_LED):
-	if current_LED == 'green':
+def interrup(current_LED_name):
+	import pdb;pdb.set_trace()
+	if current_LED_name == 'green':
 		led_on(semaphore_red,red_time)
 		transition(semaphore_red,semaphore_green, blink_t=False)
-		event.clear()
+	event.clear()
 
 def button_handler():
 	while True:
-		button.wait_for_press()
+		push_button.wait_for_press()
+		#import pdb;pdb.set_trace()
+		print("Se preciono el boton")
 		event.set()
-
-event = Event()
 
 sem = Thread(target=semaphore)
 button = Thread(target=button_handler)
