@@ -1,10 +1,6 @@
 from gpiozero import LED, Button
 from time import sleep
-#from signal import pause
-from threading import Event,Thread
-
-
-event = Event()
+from threading import Thread,Event
 
 blink_time = 0.5
 blink_iter = 3
@@ -19,13 +15,15 @@ semaphore_green = LED(26)
 
 push_button = Button(2)
 
-current_LED_name = "" 
+event = Event()
+
+time_to_stop = 1
 
 def transition(current_LED, next_LED, blink_t=True):
 	if blink_t:
 		for t in range(2 * blink_iter):
 			current_LED.toggle()
-			event.wait(blink_time)
+			sleep(blink_time)
 	current_LED.off()
 	next_LED.on()
 
@@ -34,37 +32,32 @@ def led_on(current_LED,LED_time):
 	sleep(LED_time)
 
 def semaphore():
-	global current_LED_name
 	semaphore_red.off()
 	semaphore_yellow.off()
 	semaphore_green.off()
 	while True:
-		import pdb;pdb.set_trace()
-		while not event.is_set():
-			current_LED_name = 'green'
-			led_on(semaphore_green,green_time)
-			transition(semaphore_green,semaphore_yellow)
-			current_LED_name = 'yellow'
-			led_on(semaphore_yellow,yellow_time)
-			transition(semaphore_yellow,semaphore_red, blink_t=False)
-			current_LED_name = 'red'
-			led_on(semaphore_red,red_time)
-			transition(semaphore_red,semaphore_green, blink_t=False)
-		#Handler
-		interrup(current_LED_name)
-
-def interrup(current_LED_name):
-	import pdb;pdb.set_trace()
-	if current_LED_name == 'green':
+		semaphore_green.on()
+		if event.wait(green_time):
+			sleep(time_to_stop)
+			interrup()
+		transition(semaphore_green,semaphore_yellow)
+		led_on(semaphore_yellow,yellow_time)
+		transition(semaphore_yellow,semaphore_red, blink_t=False)
 		led_on(semaphore_red,red_time)
 		transition(semaphore_red,semaphore_green, blink_t=False)
+
+def interrup():
+	transition(semaphore_green,semaphore_yellow)
+	led_on(semaphore_yellow,yellow_time)
+	transition(semaphore_yellow,semaphore_red, blink_t=False)
+	led_on(semaphore_red,red_time)
+	transition(semaphore_red,semaphore_green, blink_t=False)
 	event.clear()
 
 def button_handler():
 	while True:
 		push_button.wait_for_press()
-		#import pdb;pdb.set_trace()
-		print("Se preciono el boton")
+		print("Se presionó el botón")
 		event.set()
 
 sem = Thread(target=semaphore)
