@@ -15,6 +15,14 @@ semaphore_yellow = LED(19)
 semaphore_green = LED(26)
 
 def transition(current_LED, next_LED, blink_t=True):
+	"""
+	Función que realiza la transición de un estado a otro.
+	Permite solo cambiar o realizar un parpadeo para indicar la transición.
+	Args:
+		current_LED (LED): LED desde el cual se va a cambiar
+		next_LED (LED): LED al cual se quiere llegar
+		blink_t (bool, optional): Indicia si se tiene que realizar el parpadeo para la transición. Defaults to True.
+	"""	
 	if blink_t:
 		for t in range(2 * blink_iter):
 			current_LED.toggle()
@@ -23,6 +31,13 @@ def transition(current_LED, next_LED, blink_t=True):
 	next_LED.on()
 
 def led_on(current_LED,LED_time):
+	"""
+	Enciende un LED
+
+	Args:
+		current_LED (LED): LED a encender
+		LED_time (float): Tiempo de encendido
+	"""	
 	current_LED.on()
 	sleep(LED_time)
 
