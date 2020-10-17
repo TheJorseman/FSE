@@ -3,7 +3,7 @@ from bluedot import BlueDot
 from gpiozero import LED
 
 bd = BlueDot()
-led = LED(27)
+led = LED(2)
 
 bd.wait_for_press()
 led.on()

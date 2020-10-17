@@ -6,7 +6,7 @@ def set_brightness(pos):
     brightness = (pos.y + 1) / 2
     led.value = brightness
 
-led = PWMLED(27)
+led = PWMLED(2)
 bd = BlueDot()
 bd.when_moved = set_brightness
 pause()
