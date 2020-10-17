@@ -39,7 +39,8 @@ def led_on(current_LED,LED_time):
 		LED_time (float): Tiempo de encendido
 	"""	
 	current_LED.on()
-	sleep(LED_time)
+	#sleep(LED_time)
+	
 
 bd = BlueDot()
 
