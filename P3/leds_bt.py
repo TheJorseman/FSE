@@ -14,9 +14,7 @@ def dpad(pos):
     red.off()
     yellow.off()
     green.off()
-
     print(pos.x,",",pos.y)
-
     if pos.x < -1 + 2/3:
         set_brightness(pos,red)
     elif pos.x >= -1 + 2/3 and pos.x < -1 + 4/3:
