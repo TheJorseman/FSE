@@ -1,0 +1,28 @@
+from bluedot import BlueDot
+from gpiozero import PWMLED
+
+red = PWMLED(13)
+yellow = PWMLED(19)
+green = PWMLED(26)
+
+
+def set_brightness(pos,led):
+    brightness = (pos.y + 1) / 2
+    led.value = brightness
+
+def dpad(pos):
+    red.off()
+    yellow.off()
+    green.off()
+
+    print(pos.x,",",pos.y)
+
+    if pos.x < 1/3: set_brightness(pos,red)
+    elif pos.x >= 1/3 and pos.x < 2/3:
+        set_brightness(pos,yellow)
+    elif pos.x >= 2/3:
+        set_brightness(pos,green)
+
+bd = BlueDot()
+while True:   
+    bd.when_pressed = dpad

@@ -10,9 +10,9 @@ tira_LED = PWMLED(19)
 persiana_LED = PWMLED(26)
 
 alarma_stop = False 
-alarma_time = 10
-alarma_time_inter = 0.3
-alarma_n = ceil(10/0.3)
+alarma_time = 5
+alarma_time_inter = 0.5
+alarma_n = ceil(alarma_time/(2 * alarma_time_inter))
 
 
 
@@ -24,21 +24,25 @@ def alarma(disp):
         disp.on()
         sleep(alarma_time_inter)
         disp.off()
+        sleep(alarma_time_inter)
     return
 
 tira_rgb_time = 5
 def tiraLED(disp):
+    print("TiraLed")
     disp.on()
     sleep(tira_rgb_time)
     disp.off()
 
 motor_time = 5
 def persiana(disp):
+    print("Persiana")
     disp.on()
     sleep(motor_time)
     disp.off()
 
 def Foco(disp,pos):
+    print("Persiana")
     disp.value = pos.y 
 
 def dpad(pos):
@@ -51,9 +55,9 @@ def dpad(pos):
         alarma(alarma_LED)
     elif pos.x >= 0 and pos.y>0:
         Foco(Foco_LED,pos)
-    elif pos.x < 0 and pos.y <0:
+    elif pos.x < 0 and pos.y <=0:
         persiana(persiana_LED)
-    else:
+    elif pos.x >= 0 and pos.y<0:
         tiraLED(tira_LED)
 
 bd = BlueDot()
