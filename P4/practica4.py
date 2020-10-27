@@ -21,8 +21,8 @@ def get_full_name(message):
     Returns:
         str: Nombre del usuario
     """    
-    user_info = message["from_user"]
-    return user_info["first_name"] + " " + user_info["last_name"]
+    user_info = message.from_user.to_dict()
+    return user_info["first_name"] + " " + user_info["last_name"] + "\n"
     
 def parse_leds(message,command):
     """
@@ -38,12 +38,12 @@ def parse_leds(message,command):
                      False y un mensaje de error.
     """
 
-    text = message["from_user"]
-    correct_command = re.search(command+"\s+GPIO\s",text)
+    texto = message.text
+    correct_command = re.search(command+"\s+GPIO\s",texto)
     if not correct_command:
         return False,"\nEl mensaje enviado no coincide con lo que se esperaba "+ command +" GPIO n,n,..."
     list_GPIO = re.findall(r'(\b([0-9]|1[0-9]|2[0-7])\b)(?=\,|\s|$)+', texto) 
-    return True, [match(0) for match in list_GPIO ]
+    return True, [int(match[0]) for match in list_GPIO ]
 
 def leds_on(list_GPIO):
     """
@@ -64,42 +64,41 @@ def leds_off(list_GPIO):
     Args:
         list_GPIO (list): Lista de GPIO
     """ 
+    global LED_Dict
     warning_message=""
     for GPIO in list_GPIO:
         if GPIO not in LED_Dict.keys():
-            warning_message += "\nAdvertencia:\n El pin GPIO {} no esta encendido y no se puede apagar."
-        else:
-            LED_Dict[GPIO].off()
+            warning_message += "\nAdvertencia:\n El pin GPIO {} no esta declarado como encendido. Se apagara.".format(GPIO)
+            LED_Dict[GPIO] = LED(GPIO)
+        LED_Dict[GPIO].off()
     return warning_message
 
 @bot.message_handler(commands=['ledon'])
 def command_ledon(message):
-    message_json = json.dumps(str(message))
     return_message = ""
-    return_message = "Hola " + get_full_name(message_json)
-    success,parse_response = parse_ledon(message,"/ledon")
+    return_message = "Hola " + get_full_name(message)
+    success,parse_response = parse_leds(message,"/ledon")
     if not success:
         return_message += parse_message
         bot.reply_to(message, return_message)
         return
     leds_on(parse_response)
-    return_message += "Se han encedido los LEDS ubicados en los GPIO " + ",".join(parse_response) + "\n"
+    return_message += "Se han encedido los LEDS ubicados en los GPIO " + ",".join([str(GPIO) for GPIO in parse_response]) + "\n"
     bot.reply_to(message, return_message)
 
 
 # Handle '/ledon'
 @bot.message_handler(commands=['ledoff'])
 def command_ledoff(message):
-    message_json = json.dumps(str(message))
     return_message = ""
-    return_message = "Hola " + get_full_name(message_json)
-    success,parse_response = parse_ledon(message,"/ledoff")
+    return_message = "Hola " + get_full_name(message)
+    success,parse_response = parse_leds(message,"/ledoff")
     if not success:
-        return_message += parse_message
+        return_message += parse_response
         bot.reply_to(message, return_message)
         return
     message_off = leds_off(parse_response)
-    return_message += "Se han apagado los LEDS ubicados en los GPIO " + ",".join(parse_response) + "\n" + message_off
+    return_message += "Se han apagado los LEDS ubicados en los GPIO " + ",".join([str(GPIO) for GPIO in parse_response]) + "\n" + message_off
     bot.reply_to(message, return_message)
 
 # Handle '/start' and '/help'
