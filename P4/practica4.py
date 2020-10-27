@@ -1,6 +1,4 @@
 #!/usr/bin/python
-# This is a simple echo bot using the decorator mechanism.
-# It echoes any incoming text messages.
 import telebot
 import json
 import re
@@ -8,7 +6,7 @@ from gpiozero import LED
 
 LED_Dict = {}
 
-API_TOKEN = '1088193438:AAFffJIzdeGBWtSZhzDCeoYTlkDK2O_Naq4'
+API_TOKEN = ''
 bot = telebot.TeleBot(API_TOKEN)
 
 def get_full_name(message):
@@ -79,7 +77,7 @@ def command_ledon(message):
     return_message = "Hola " + get_full_name(message)
     success,parse_response = parse_leds(message,"/ledon")
     if not success:
-        return_message += parse_message
+        return_message += parse_response
         bot.reply_to(message, return_message)
         return
     leds_on(parse_response)
