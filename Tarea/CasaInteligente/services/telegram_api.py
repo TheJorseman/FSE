@@ -102,7 +102,7 @@ class Telegram(object):
         except Exception as e:
             return_message += "\n"+ str(e) 
             return return_message
-        disps = self.set_on_disps(disps)
+        disps = self.set_off_disps(disps)
         return_message += "Se han apagado el\los dispositivos " + disps
         return return_message
 
