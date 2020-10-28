@@ -88,7 +88,7 @@ class Telegram(object):
 
     def set_value(self,disp,value):
         self.disps[disp].value = value
-        return ",".join([disps])
+        return ",".join([disp])
 
     def command_on(self,message):
         return_message = ""
