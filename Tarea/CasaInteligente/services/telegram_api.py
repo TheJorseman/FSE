@@ -78,7 +78,7 @@ class Telegram(object):
             return_message += "\n"+ str(e) 
             return return_message
         disps = self.set_on_disps(disps)
-        return_message += "Se han encedido los dispositivos " + ",".join(disps)
+        return_message += "Se han encedido el\los dispositivos " + ",".join(disps)
         return return_message
 
     def command_off(self,message):
@@ -89,7 +89,7 @@ class Telegram(object):
             return_message += "\n"+ str(e) 
             return return_message
         disps = self.set_on_disps(disps)
-        return_message += "Se han encedido los dispositivos " + ",".join(disps)
+        return_message += "Se han apagado el\los dispositivos " + ",".join(disps)
         return return_message
 
     def command_show(self,message):
@@ -118,5 +118,5 @@ class Telegram(object):
         disps = texto.replace(command,"").strip().replace(" ","").split(",")
         if not any([match in self.disps.keys() for match in disps]):
             raise Exception("No existen el/los dispositivos " + ",".join([disp if not disp in self.disps.keys() else "" for disp in disps]) )
-        return disps
+        return disps if type(disps) == type(list()) else [disps]
 
