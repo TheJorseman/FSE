@@ -94,8 +94,8 @@ class Telegram(object):
 
     def command_show(self,message):
         return_message = "Hola " + self.get_full_name(message)
-        return_message += "\nEstos son los dispositivos que puedes manipular"
-        return_message += ",".join(self.disps.keys())
+        return_message += "\nEstos son los dispositivos que puedes manipular \n"
+        return_message += ", ".join(self.disps.keys())
         return  return_message
 
     def parse_message(self,message,command,regex):
@@ -112,7 +112,7 @@ class Telegram(object):
                         False y un mensaje de error.
         """
         texto = message.text
-        correct_command = re.search(command+regex)
+        correct_command = re.search(command+regex,texto)
         if not correct_command:
             raise Exception("El mensaje enviado no coincide con lo que se esperaba "+ command)
         list_disp = re.findall(regex, texto) 
