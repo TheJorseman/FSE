@@ -12,9 +12,10 @@ bot_enc = telebot.TeleBot("1088193438:AAFffJIzdeGBWtSZhzDCeoYTlkDK2O_Naq4")
 
 bot_encendido = Telegram("Encendido", bot_enc)
 bot_encendido.set_elements(dispositivos)
-bot_encendido.add_action_message("\n \on disp,disp Enciende el/los dispositivos seleccionados")
-bot_encendido.add_action_message("\n \off disp,disp Apaga el/los dispositivos seleccionados")
-bot_encendido.add_action_message("\n \show Muestra los dispositivos que se encuentran activados")
+bot_encendido.add_action_message("\on","\nEnciende el/los dispositivos seleccionados","\n\on alarma,foco")
+bot_encendido.add_action_message("\off","\nApaga el/los dispositivos seleccionados","\n\off alarma,foco")
+bot_encendido.add_action_message("\setvalue","\nEstablece el valor PWM al seleccionado","\n\setvalue alarma 0.5")
+bot_encendido.add_action_message("\show","\nMuestra los dispositivos que se encuentran activados","\show")
 
 @bot_enc.message_handler(commands=['on'])
 def command_ledon(message):
@@ -35,5 +36,11 @@ def send_welcome(message):
 def command_show(message):
     response = bot_encendido.command_show(message)
     bot_enc.reply_to(message, response)
+
+@bot_enc.message_handler(commands=['setvalue'])
+def command_show(message):
+    response = bot_encendido.command_set_value(message)
+    bot_enc.reply_to(message, response)
+
 
 bot_enc.polling()

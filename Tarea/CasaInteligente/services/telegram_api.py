@@ -10,7 +10,7 @@ class Telegram(object):
         self.bot = bot
         self.init_message = "Hola soy " + name
         self.disps = {}
-        self.commands = []
+        self.commands = {}
 
     def command_start_help(self):
         """
@@ -21,11 +21,15 @@ class Telegram(object):
 
         Returns:
             [type]: [description]
-        """        
-        return init_message + "\n" + "\n".join(self.commands)
+        """
+        text = []  
+        for command_text in self.commands.values():
+            text.append(command_text["message"])
+            text.append(command_text["example"])
+        return init_message + "\n" + "\n".join(text)
 
-    def add_action_message(self,message):
-        self.commands.append(message)
+    def add_action_message(self,command, message, example):
+        self.commands[command] = {"message": message, "example": example}
 
     def get_full_name(self,message):
         """
@@ -82,6 +86,9 @@ class Telegram(object):
             self.disps[disp].off()
         return ",".join(disps)
 
+    def set_value(self,disp,value):
+        self.disps[disp].value = value
+        return ",".join([disps])
 
     def command_on(self,message):
         return_message = ""
@@ -107,10 +114,42 @@ class Telegram(object):
         return return_message
 
     def command_show(self,message):
+        """
+        Retorna un string con la informacion de todas las acciones
+
+        Args:
+            message (message): json con el mensaje mandado por el usuario
+
+        Returns:
+            str: string con la ayuda
+        """        
         return_message = "Hola " + self.get_full_name(message)
         return_message += "\nEstos son los dispositivos que puedes manipular \n"
         return_message += ", ".join(self.disps.keys())
         return  return_message
+
+    def command_set_value(self,message):
+        return_message = ""
+        return_message = "Hola " + self.get_full_name(message)
+        try:
+            disp,value = self.parse_message_with_args(message,"/setvalue",regexp.disp_with_number_0_1())
+        except Exception as e:
+            return_message += "\n"+ str(e) 
+            return return_message
+        disps = self.set_value(disp,value)
+        return_message += "Se han establecido el valor de {} al {} ".format(disp,value)
+        return return_message   
+
+    def parse_message_with_args(self,message,command,regex):
+        self.check_message_structure(message,command,regex)
+        texto = message.text.lower()
+        values = re.findall(regex,texto)
+        if not values:
+            raise Exception("No se pudo encontrar una sentencia con la siguiente estructura " + self.commands[command]["example"])
+        disp,value = values[0]
+        if not disp in self.disps.keys():
+            raise Exception("No se pudo encontrar un dispositivo con el nombre " + disp, " ingrese el comando con alguno de los siguientes dispositivos " + "\n".join(self.disps.keys()) )
+        return disp,float(value)     
 
     def parse_message(self,message,command,regex):
         """
@@ -125,10 +164,8 @@ class Telegram(object):
             object: Si el texto coincide con lo esperado, se devuelve un True y la lista de los GPIO, en caso contrario se regresa 
                         False y un mensaje de error.
         """
+        self.check_message_structure(message,command,regex)
         texto = message.text.lower()
-        correct_command = re.search(command+regex,texto)
-        if not correct_command:
-            raise Exception("El mensaje enviado no coincide con lo que se esperaba "+ command)
         disps = texto.replace(command,"").strip().replace(" ","").split(",")
         if "all" in disps:
             return list(self.disps.keys())
@@ -136,3 +173,8 @@ class Telegram(object):
             raise Exception("No existen el/los dispositivos " + ",".join([disp if not disp in self.disps.keys() else "" for disp in disps]) )
         return disps
 
+    def check_message_structure(self,message,command,regex):
+        texto = message.text.lower()
+        correct_command = re.search(command+regex,texto)
+        if not correct_command:
+            raise Exception("El mensaje enviado no coincide con lo que se esperaba "+ self.commands[command]["example"]) if command in self.commands.keys() else ""
