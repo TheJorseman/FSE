@@ -68,7 +68,7 @@ class Telegram(object):
             self.disps[disp].on()
         return ",".join(disps)
 
-    def set_on_disps(self,disps):
+    def set_off_disps(self,disps):
         """
         Pone en bajo los dispositivos seleccionados
 
