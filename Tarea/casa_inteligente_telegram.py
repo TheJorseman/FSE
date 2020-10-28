@@ -3,7 +3,7 @@ from CasaInteligente.components import foco,persiana,alarma,tira_led
 
 bot_encendido = object()
 
-@bot.message_handler(commands=['on'])
+@bot_encendido.message_handler(commands=['on'])
 def command_ledon(message):
     bot_encendido.command_on(message)
 
