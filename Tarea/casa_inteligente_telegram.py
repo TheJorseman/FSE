@@ -12,6 +12,7 @@ bot_encendido = Telegram("Encendido","1088193438:AAFffJIzdeGBWtSZhzDCeoYTlkDK2O_
 bot_encendido.set_elements(dispositivos)
 bot_encendido.run()
 
-@bot_encendido.message_handler(commands=['on'])
+bot_enc = bot_encendido.bot
+@bot_enc.message_handler(commands=['on'])
 def command_ledon(message):
     bot_encendido.command_on(message)
