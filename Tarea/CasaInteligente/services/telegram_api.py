@@ -1,23 +1,31 @@
 import telebot
 import re
 from gpiozero import LED
-
 from CasaInteligente.tools.regex import regexp
 
 class Telegram(object):
 
-    def __init__(self,name,API_TOKEN):
-        self.API_TOKEN = ''
-        self.bot = telebot.TeleBot(API_TOKEN)
+    def __init__(self,name,bot):
         self.name = name
+        self.bot = bot
         self.init_message = "Hola soy " + name
         self.disps = {}
+        self.commands = []
 
     def command_start_help(self):
-        bot = self.bot
-        @bot.message_handler(commands=['help','start'])
-        def send_welcome(self,message):
-            bot.reply_to(message, init_message)
+        """
+        Regresa todas 
+
+        Args:
+            commands ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """        
+        return init_message + "\n" + "\n".join(self.commands)
+
+    def add_action_message(self,message):
+        self.commands.append(message)
 
     def get_full_name(self,message):
         """
@@ -68,27 +76,27 @@ class Telegram(object):
             disps = self.parse_message(message,"/on",regexp.get_csv())
         except Exception as e:
             return_message += "\n"+ str(e) 
-            self.bot.reply_to(message, return_message)
-            return
+            return return_message
         disps = self.set_on_disps(disps)
         return_message += "Se han encedido los dispositivos " + ",".join(disps)
-        self.bot.reply_to(message, return_message)
+        
 
-    def command_off(self):
-        bot = self.bot
-        @bot.message_handler(commands=['off'])
-        def command_ledoff(self,message):
-            return_message = "Hola " + self.get_full_name(message)
-            try:
-                disps = parse_message(message,"/off",regexp.get_csv())
-            except Exception as e:
-                return_message += "\n"+ str(e) 
-                self.bot.reply_to(message, return_message)
-                return
-            disps = self.set_on_disps(disps)
-            return_message += "Se han encedido los dispositivos " + ",".join(disps)
-            bot.reply_to(message, return_message)
-       
+    def command_off(self,message):
+        return_message = "Hola " + self.get_full_name(message)
+        try:
+            disps = parse_message(message,"/off",regexp.get_csv())
+        except Exception as e:
+            return_message += "\n"+ str(e) 
+            return return_message
+        disps = self.set_on_disps(disps)
+        return_message += "Se han encedido los dispositivos " + ",".join(disps)
+        return return_message
+
+    def command_show(self,message):
+        return_message = "Hola " + self.get_full_name(message)
+        return_message += "\nEstos son los dispositivos que puedes manipular"
+        return_message += ",".join(self.disps.keys())
+        return  return_message
 
     def parse_message(self,message,command,regex):
         """
@@ -113,5 +121,3 @@ class Telegram(object):
             raise Exception("No existen el/los dispositivos " + ",".join([disp if not disp in self.disps.keys() else "" for disp in disps]) )
         return disps
 
-    def run(self):
-        self.bot.polling()
