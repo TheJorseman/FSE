@@ -13,9 +13,11 @@ class Telegram(object):
         self.init_message = "Hola soy " + name
         self.disps = {}
 
-    @self.bot.message_handler(commands=['help','start'])
-    def send_welcome(self,message):
-        bot.reply_to(message, init_message)
+    def command_start_help(self):
+        bot = self.bot
+        @bot.message_handler(commands=['help','start'])
+        def send_welcome(self,message):
+            bot.reply_to(message, init_message)
 
     def get_full_name(self,message):
         """
@@ -58,32 +60,37 @@ class Telegram(object):
             self.disps[disp].on()
         return ",".join(disps)
 
-    @self.bot.message_handler(commands=['on'])
-    def command_ledon(self,message):
-        return_message = ""
-        return_message = "Hola " + self.get_full_name(message)
-        try:
-            disps = parse_message(message,"/on",regexp.get_csv())
-        except Exception as e:
-            return_message += "\n"+ str(e) 
-            self.bot.reply_to(message, return_message)
-            return
-        disps = self.set_on_disps(disps)
-        return_message += "Se han encedido los dispositivos " + ",".join(disps)
-        bot.reply_to(message, return_message)
 
-    @self.bot.message_handler(commands=['off'])
-    def command_ledoff(self,message):
-        return_message = "Hola " + self.get_full_name(message)
-        try:
-            disps = parse_message(message,"/off",regexp.get_csv())
-        except Exception as e:
-            return_message += "\n"+ str(e) 
-            self.bot.reply_to(message, return_message)
-            return
-        disps = self.set_on_disps(disps)
-        return_message += "Se han encedido los dispositivos " + ",".join(disps)
-        bot.reply_to(message, return_message)
+    def command_on(self):
+        bot = self.bot
+        @bot.message_handler(commands=['on'])
+        def command_ledon(self,message):
+            return_message = ""
+            return_message = "Hola " + self.get_full_name(message)
+            try:
+                disps = parse_message(message,"/on",regexp.get_csv())
+            except Exception as e:
+                return_message += "\n"+ str(e) 
+                self.bot.reply_to(message, return_message)
+                return
+            disps = self.set_on_disps(disps)
+            return_message += "Se han encedido los dispositivos " + ",".join(disps)
+            bot.reply_to(message, return_message)
+
+    def command_off(self):
+        bot = self.bot
+        @bot.message_handler(commands=['off'])
+        def command_ledoff(self,message):
+            return_message = "Hola " + self.get_full_name(message)
+            try:
+                disps = parse_message(message,"/off",regexp.get_csv())
+            except Exception as e:
+                return_message += "\n"+ str(e) 
+                self.bot.reply_to(message, return_message)
+                return
+            disps = self.set_on_disps(disps)
+            return_message += "Se han encedido los dispositivos " + ",".join(disps)
+            bot.reply_to(message, return_message)
        
 
     def parse_message(self,message,command,regex):
