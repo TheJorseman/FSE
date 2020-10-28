@@ -27,7 +27,7 @@ class LED(object):
             self.GPIO.off()
             sleep(inter_blink)
     
-    def on(self,time_on):
+    def on_time(self,time_on):
         self.GPIO.on()
         sleep(time_on)
         self.GPIO.off()
