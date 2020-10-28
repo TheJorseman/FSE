@@ -16,8 +16,6 @@ bot_encendido.add_action_message("\n \on disp,disp Enciende el/los dispositivos 
 bot_encendido.add_action_message("\n \off disp,disp Apaga el/los dispositivos seleccionados")
 bot_encendido.add_action_message("\n \show Muestra los dispositivos que se encuentran activados")
 
-bot_enc.polling()
-
 @bot_enc.message_handler(commands=['on'])
 def command_ledon(message):
     response = bot_encendido.command_on(message)
@@ -38,4 +36,4 @@ def command_show(self,message):
     response = bot_encendido.command_show(message)
     bot_enc.reply_to(message, response)
 
-
+bot_enc.polling()
