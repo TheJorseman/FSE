@@ -70,7 +70,7 @@ class Telegram(object):
         """        
         for disp in disps:
             self.disps[disp].on()
-        return ",".join(disps)
+        return ", ".join(disps)
 
     def set_off_disps(self,disps):
         """
@@ -84,11 +84,11 @@ class Telegram(object):
         """        
         for disp in disps:
             self.disps[disp].off()
-        return ",".join(disps)
+        return ", ".join(disps)
 
     def set_value(self,disp,value):
         self.disps[disp].value = value
-        return ",".join([disp])
+        return ", ".join([disp])
 
     def command_on(self,message):
         return_message = ""
