@@ -52,7 +52,7 @@ class Telegram(object):
 
     def set_elements(self,disps):
         for disp in disps:
-            self.disps[disp.name] = disp
+            self.disps[disp.name.lower()] = disp
 
     def set_on_disps(self,disps):
         """
@@ -111,11 +111,11 @@ class Telegram(object):
             object: Si el texto coincide con lo esperado, se devuelve un True y la lista de los GPIO, en caso contrario se regresa 
                         False y un mensaje de error.
         """
-        texto = message.text
+        texto = message.text.lower()
         correct_command = re.search(command+regex,texto)
         if not correct_command:
             raise Exception("El mensaje enviado no coincide con lo que se esperaba "+ command)
-        list_disp = re.findall(regex, texto) 
+        list_disp = re.findall(command+regex, texto) 
         disps = [match[0] for match in list_disp]
         if not any([match[0] in self.disps.keys() for match in disps]):
             raise Exception("No existen el/los dispositivos " + ",".join([disp if not disp in self.disps.keys() else "" for disp in disps]) )
