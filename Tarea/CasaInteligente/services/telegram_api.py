@@ -68,6 +68,20 @@ class Telegram(object):
             self.disps[disp].on()
         return ",".join(disps)
 
+    def set_on_disps(self,disps):
+        """
+        Pone en bajo los dispositivos seleccionados
+
+        Args:
+            disps (list): Lista de objetos a encender
+
+        Returns:
+            str: Cadena con los dispositivos encendidos
+        """        
+        for disp in disps:
+            self.disps[disp].off()
+        return ",".join(disps)
+
 
     def command_on(self,message):
         return_message = ""
@@ -78,18 +92,18 @@ class Telegram(object):
             return_message += "\n"+ str(e) 
             return return_message
         disps = self.set_on_disps(disps)
-        return_message += "Se han encedido el\los dispositivos " + ",".join(disps)
+        return_message += "Se han encedido el\los dispositivos " + disps
         return return_message
 
     def command_off(self,message):
         return_message = "Hola " + self.get_full_name(message)
         try:
-            disps = parse_message(message,"/off",regexp.get_csv())
+            disps = self.parse_message(message,"/off",regexp.get_csv())
         except Exception as e:
             return_message += "\n"+ str(e) 
             return return_message
         disps = self.set_on_disps(disps)
-        return_message += "Se han apagado el\los dispositivos " + ",".join(disps)
+        return_message += "Se han apagado el\los dispositivos " + disps
         return return_message
 
     def command_show(self,message):
@@ -116,7 +130,9 @@ class Telegram(object):
         if not correct_command:
             raise Exception("El mensaje enviado no coincide con lo que se esperaba "+ command)
         disps = texto.replace(command,"").strip().replace(" ","").split(",")
+        if "all" in disps:
+            return list(self.disps.keys())
         if not any([match in self.disps.keys() for match in disps]):
             raise Exception("No existen el/los dispositivos " + ",".join([disp if not disp in self.disps.keys() else "" for disp in disps]) )
-        return disps if type(disps) == type(list()) else [disps]
+        return disps
 
