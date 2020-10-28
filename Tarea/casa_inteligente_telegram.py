@@ -23,17 +23,17 @@ def command_ledon(message):
     response = bot_encendido.command_on(message)
     bot_enc.reply_to(message, response)
     
-@bot.message_handler(commands=['off'])
+@bot_enc.message_handler(commands=['off'])
 def command_ledoff(self,message):
     response = bot_encendido.command_off(message)
     bot_enc.reply_to(message, response)
 
-@bot.message_handler(commands=['help','start'])
+@bot_enc.message_handler(commands=['help','start'])
 def send_welcome(self,message):
     response = bot_encendido.command_start_help()
     bot_enc.reply_to(message, response)
 
-@bot.message_handler(commands=['show'])
+@bot_enc.message_handler(commands=['show'])
 def command_show(self,message):
     response = bot_encendido.command_show(message)
     bot_enc.reply_to(message, response)
