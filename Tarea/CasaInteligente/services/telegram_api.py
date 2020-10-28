@@ -61,17 +61,18 @@ class Telegram(object):
         return ",".join(disps)
 
 
-    def command_on(self):
+    def command_on(self,):
         bot = self.bot
         @bot.message_handler(commands=['on'])
-        def command_ledon(self,message):
+        def command_ledon(message):
+            import pdb;pdb.set_trace()
             return_message = ""
             return_message = "Hola " + self.get_full_name(message)
             try:
                 disps = parse_message(message,"/on",regexp.get_csv())
             except Exception as e:
                 return_message += "\n"+ str(e) 
-                self.bot.reply_to(message, return_message)
+                bot.reply_to(message, return_message)
                 return
             disps = self.set_on_disps(disps)
             return_message += "Se han encedido los dispositivos " + ",".join(disps)

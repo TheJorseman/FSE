@@ -1,7 +1,6 @@
 from CasaInteligente.services.telegram_api import Telegram
 from CasaInteligente.components import foco,persiana,alarma,tira_led
 
-
 def main():
     alarma_obj = alarma.Alarma(0,"alarma")
     persiana_obj = persiana.Persiana(1,"persiana")
