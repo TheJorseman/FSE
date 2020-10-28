@@ -115,9 +115,8 @@ class Telegram(object):
         correct_command = re.search(command+regex,texto)
         if not correct_command:
             raise Exception("El mensaje enviado no coincide con lo que se esperaba "+ command)
-        list_disp = re.findall(command+regex, texto) 
-        disps = [match[0] for match in list_disp]
-        if not any([match[0] in self.disps.keys() for match in disps]):
+        disps = texto.replace(command,"").strip().replace(" ","").split(",")
+        if not any([match in self.disps.keys() for match in disps]):
             raise Exception("No existen el/los dispositivos " + ",".join([disp if not disp in self.disps.keys() else "" for disp in disps]) )
         return disps
 
