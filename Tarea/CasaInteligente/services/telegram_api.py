@@ -79,7 +79,7 @@ class Telegram(object):
             return return_message
         disps = self.set_on_disps(disps)
         return_message += "Se han encedido los dispositivos " + ",".join(disps)
-        
+        return return_message
 
     def command_off(self,message):
         return_message = "Hola " + self.get_full_name(message)
